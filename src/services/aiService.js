@@ -76,7 +76,7 @@ export const INVESTOR_PERSONAS = [
   {
     id: "cto_aris",
     name: "Dr. Aris Thorne",
-    role: "Chief Architect & AI AI Ethics Lead",
+    role: "Chief Architect & AI Ethics Lead",
     avatar: "⚡",
     archetype: "Skeptical Technical CTO",
     focus: "Latency, Edge Cases, Hallucination & Scalability",
@@ -99,8 +99,7 @@ export const INVESTOR_PERSONAS = [
  * Generates full 6-slide deck based on input startup data.
  */
 export async function generatePitchDeck(formData) {
-  // Simulate AI processing delay for rich loading experience
-  await new Promise((res) => setTimeout(res, 1200));
+  await new Promise((res) => setTimeout(res, 1000));
 
   const name = formData.name || "NovaCorp AI";
   const tagline = formData.tagline || "The Next Generation Intelligence Platform";
@@ -231,71 +230,269 @@ export async function generatePitchDeck(formData) {
 }
 
 /**
- * Simulates AI Investor response and follow-up question.
+ * Intelligent Dynamic Investor Response Simulator
+ * Guarantees context-aware, non-repeating, multi-turn AI responses.
  */
-export async function simulateInvestorResponse(personaId, userPitchText, conversationHistory, deckData) {
-  await new Promise((res) => setTimeout(res, 1000));
+export async function simulateInvestorResponse(personaId, userPitchText, conversationHistory = [], deckData = {}) {
+  await new Promise((res) => setTimeout(res, 800));
 
   const persona = INVESTOR_PERSONAS.find((p) => p.id === personaId) || INVESTOR_PERSONAS[0];
   const startupName = deckData?.metadata?.name || "your startup";
+  const lowerText = userPitchText.toLowerCase().trim();
+  const turnIndex = conversationHistory.filter((item) => item.sender === 'user').length;
 
-  // Dynamic responses based on archetype and keywords
   let aiComment = "";
   let followUpQuestion = "";
-  let scoreImpact = 85;
+  let scoreImpact = 82;
 
-  const lowerText = userPitchText.toLowerCase();
+  // Keyword Intent Detector
+  const containsWord = (...words) => words.some((w) => lowerText.includes(w));
 
+  // --- VICTOR VANCE (Aggressive VC - TAM, Moat, Scale) ---
   if (persona.id === "vc_victor") {
-    if (lowerText.includes("ai") || lowerText.includes("moat") || lowerText.includes("defensib")) {
-      aiComment = "Good point on defensibility, but big tech models are getting cheaper by the day.";
-      followUpQuestion = "What proprietary data or network effect prevents OpenAI or Google from building this as a free plugin next quarter?";
+    if (containsWord("ai", "moat", "defensib", "patent", "proprietary", "data")) {
+      const options = [
+        {
+          comment: `You mentioned data and defensibility for ${startupName}. But foundational AI models update every month.`,
+          q: "What proprietary network effect or data flywheel makes your product defensible when hyperscalers launch competing features for free?"
+        },
+        {
+          comment: "I hear the tech narrative, but algorithms alone rarely create sustainable software moats.",
+          q: "How locked-in are your customers? If a competitor offers a 50% price cut tomorrow, why wouldn't they switch?"
+        }
+      ];
+      const pick = options[turnIndex % options.length];
+      aiComment = pick.comment;
+      followUpQuestion = pick.q;
       scoreImpact = 88;
-    } else if (lowerText.includes("margin") || lowerText.includes("arr") || lowerText.includes("revenue") || lowerText.includes("customer")) {
-      aiComment = "Your customer acquisition numbers look interesting, but what is your payback period?";
-      followUpQuestion = "If CAC doubles as you scale sales channels, how does your unit economics hold up?";
+    } else if (containsWord("price", "arr", "revenue", "cost", "margin", "cac", "ltv", "money")) {
+      const options = [
+        {
+          comment: "Your financial outlook touches on revenue, but unit economics dictate true valuation.",
+          q: "What is your current customer acquisition cost (CAC), and how many months does it take to recoup that investment?"
+        },
+        {
+          comment: "Marginal profit looks promising on paper, but scaling sales headcount destroys margins quickly.",
+          q: "What is your projected LTV-to-CAC ratio once you scale past your first 100 enterprise accounts?"
+        }
+      ];
+      const pick = options[turnIndex % options.length];
+      aiComment = pick.comment;
+      followUpQuestion = pick.q;
       scoreImpact = 90;
+    } else if (containsWord("market", "tam", "scale", "growth", "global", "expand")) {
+      const options = [
+        {
+          comment: "Capturing a slice of a large market is standard pitch material.",
+          q: "Walk me through your exact 18-month expansion roadmap. Which specific sub-segment do you dominate first before expanding?"
+        },
+        {
+          comment: "Market size calculations often overstate actual obtainable addressable demand.",
+          q: "Realistic SOM is usually 5% of TAM. What is your bottom-up calculation for obtainable revenue in Year 2?"
+        }
+      ];
+      const pick = options[turnIndex % options.length];
+      aiComment = pick.comment;
+      followUpQuestion = pick.q;
+      scoreImpact = 86;
     } else {
-      aiComment = "That sounds somewhat vague. In venture capital, we need extreme clarity on scale.";
-      followUpQuestion = "Break down how this reaches $100M in ARR over the next 5 years. What are the key expansion levers?";
-      scoreImpact = 76;
-    }
-  } else if (persona.id === "angel_elena") {
-    if (lowerText.includes("user") || lowerText.includes("feedback") || lowerText.includes("retention")) {
-      aiComment = "I love seeing founder passion for customer delight! That's the real seed of greatness.";
-      followUpQuestion = "What was the most surprising piece of negative feedback a user gave you, and how did you pivot?";
-      scoreImpact = 94;
-    } else {
-      aiComment = "The tech sounds neat, but I care deeply about organic adoption and user behavior.";
-      followUpQuestion = "How do your first 100 users find out about you without spending millions on paid ads?";
-      scoreImpact = 82;
-    }
-  } else if (persona.id === "cto_aris") {
-    if (lowerText.includes("cache") || lowerText.includes("latency") || lowerText.includes("fine-tune") || lowerText.includes("security") || lowerText.includes("architecture")) {
-      aiComment = "Appreciate the technical depth on caching and architecture.";
-      followUpQuestion = "How do you handle edge-case hallucinations when a user enters malformed or adversarial prompts?";
-      scoreImpact = 91;
-    } else {
-      aiComment = "You're hand-waving over the infrastructure layer. AI systems break at high throughput.";
-      followUpQuestion = "What is your fallback mechanism when third-party API rate limits hit during peak usage hours?";
-      scoreImpact = 74;
-    }
-  } else { // Enterprise Buyer Marcus
-    if (lowerText.includes("security") || lowerText.includes("soc2") || lowerText.includes("compliance") || lowerText.includes("sla")) {
-      aiComment = "Clear understanding of enterprise security requirements. That speeds up procurement.";
-      followUpQuestion = "Do you support single sign-on (SSO) and role-based access control out of the box?";
-      scoreImpact = 93;
-    } else {
-      aiComment = "Enterprise IT committees veto 90% of new SaaS tools due to compliance concerns.";
-      followUpQuestion = "What guarantees and SLAs can you sign today to ensure zero data leakage for corporate IP?";
+      // Dynamic turn-based progression
+      const turnResponses = [
+        {
+          comment: `Interesting perspective on ${startupName}, but venture capital requires exponential $100M+ ARR potential.`,
+          q: "If I invest $1.5M today, what are the top 3 critical milestones you hit in the next 12 months to unlock a 10x valuation jump?"
+        },
+        {
+          comment: "You're speaking high-level strategy. I need quantitative proof of execution momentum.",
+          q: "What is your strongest traction metric right now (e.g. MoM user growth, net revenue retention, or sales velocity)?"
+        },
+        {
+          comment: "That addresses part of the picture, but competitive response time is critical.",
+          q: "If an incumbent legacy player clone your core feature in their next release, what is your unfair distribution advantage?"
+        }
+      ];
+      const pick = turnResponses[turnIndex % turnResponses.length];
+      aiComment = pick.comment;
+      followUpQuestion = pick.q;
       scoreImpact = 79;
     }
   }
 
-  // Calculate real-time feedback scores
-  const clarityScore = Math.min(98, Math.max(65, Math.floor(scoreImpact + (userPitchText.length > 50 ? 5 : -10))));
-  const persuasivenessScore = Math.min(99, Math.max(60, Math.floor(scoreImpact + Math.random() * 6)));
-  const objectionHandlingScore = Math.min(96, Math.max(62, Math.floor(scoreImpact - Math.random() * 4)));
+  // --- ELENA ROSTOVA (Product Visionary & Angel) ---
+  else if (persona.id === "angel_elena") {
+    if (containsWord("user", "customer", "feedback", "retention", "love", "churn", "delight")) {
+      const options = [
+        {
+          comment: "I love your focus on customer delight! Great products win on user passion.",
+          q: "Tell me about a specific feature your early users requested that completely changed your product roadmap."
+        },
+        {
+          comment: "High customer retention is the truest indicator of product-market fit.",
+          q: "What is your 30-day user retention rate, and what specific onboarding step triggers the 'aha' moment?"
+        }
+      ];
+      const pick = options[turnIndex % options.length];
+      aiComment = pick.comment;
+      followUpQuestion = pick.q;
+      scoreImpact = 94;
+    } else if (containsWord("team", "founder", "background", "experience", "mission", "passion")) {
+      const options = [
+        {
+          comment: "Early stage investing is 80% betting on the founder's resilience.",
+          q: "What unique insight or hard-earned lesson from your past experience gives your team the right to win this market?"
+        },
+        {
+          comment: "Great founder teams balance vision with execution grit.",
+          q: "When things got tough during early development, how did your team resolve critical strategic disagreements?"
+        }
+      ];
+      const pick = options[turnIndex % options.length];
+      aiComment = pick.comment;
+      followUpQuestion = pick.q;
+      scoreImpact = 92;
+    } else {
+      const turnResponses = [
+        {
+          comment: `I see potential in ${startupName}, but organic acquisition beats paid marketing every time.`,
+          q: "How do your first 1,000 active users find out about your product without spending heavily on paid ads?"
+        },
+        {
+          comment: "Product simplicity is key to rapid word-of-mouth growth.",
+          q: "How long does it take a brand new user to get full value from your software after signing up?"
+        },
+        {
+          comment: "That gives context, but user habit creation is what builds enduring companies.",
+          q: "What daily or weekly workflow triggers bring users back into your application organically?"
+        }
+      ];
+      const pick = turnResponses[turnIndex % turnResponses.length];
+      aiComment = pick.comment;
+      followUpQuestion = pick.q;
+      scoreImpact = 84;
+    }
+  }
+
+  // --- DR. ARIS THORNE (Skeptical Technical CTO) ---
+  else if (persona.id === "cto_aris") {
+    if (containsWord("latency", "speed", "cache", "architecture", "scale", "infrastructure", "api", "gpu", "model")) {
+      const options = [
+        {
+          comment: "Good technical awareness regarding infrastructure and throughput.",
+          q: "What is your average P99 latency response time under heavy concurrent user requests?"
+        },
+        {
+          comment: "Caching helps, but model inference overhead scales linearly with prompt complexity.",
+          q: "How do you optimize GPU compute costs as daily active queries scale 10x?"
+        }
+      ];
+      const pick = options[turnIndex % options.length];
+      aiComment = pick.comment;
+      followUpQuestion = pick.q;
+      scoreImpact = 91;
+    } else if (containsWord("security", "privacy", "data", "encrypt", "hallucinational", "error", "failover")) {
+      const options = [
+        {
+          comment: "Handling edge-case failures and data privacy is paramount for production AI.",
+          q: "What automated validation pipeline prevents hallucinations or inaccurate outputs from reaching end users?"
+        },
+        {
+          comment: "Data privacy regulations are tightening across enterprise deployment environments.",
+          q: "Do you fine-tune open-weight models on customer data, and how do you guarantee zero cross-tenant data leaks?"
+        }
+      ];
+      const pick = options[turnIndex % options.length];
+      aiComment = pick.comment;
+      followUpQuestion = pick.q;
+      scoreImpact = 93;
+    } else {
+      const turnResponses = [
+        {
+          comment: "You're covering business points, but as CTO I care about system reliability under stress.",
+          q: "What is your architectural fallback when third-party AI APIs experience rate-limits or 4-hour outages?"
+        },
+        {
+          comment: "Technical debt accumulates rapidly in early AI prototypes.",
+          q: "How modular is your code architecture if you need to swap out core model providers next month?"
+        },
+        {
+          comment: "Let's dig into data pipeline performance.",
+          q: "How do you handle real-time streaming data integration without creating processing bottlenecks?"
+        }
+      ];
+      const pick = turnResponses[turnIndex % turnResponses.length];
+      aiComment = pick.comment;
+      followUpQuestion = pick.q;
+      scoreImpact = 78;
+    }
+  }
+
+  // --- MARCUS BRODY (Enterprise Buyer) ---
+  else {
+    if (containsWord("soc2", "compliance", "sla", "sso", "security", "audit", "gdpr", "hipaa")) {
+      const options = [
+        {
+          comment: "Clear understanding of compliance metrics! That streamlines enterprise procurement approval.",
+          q: "Do you have SOC2 Type II certification completed, or what is your audit completion timeline?"
+        },
+        {
+          comment: "Security reviews can stall deals by 6 months if requirements aren't met up front.",
+          q: "Do you support SAML/OKTA Single Sign-On (SSO) and granular role-based access control out of the box?"
+        }
+      ];
+      const pick = options[turnIndex % options.length];
+      aiComment = pick.comment;
+      followUpQuestion = pick.q;
+      scoreImpact = 95;
+    } else if (containsWord("roi", "cost", "save", "time", "integration", "onboard", "workflow")) {
+      const options = [
+        {
+          comment: "Demonstrating clear ROI is essential to securing CFO purchasing sign-off.",
+          q: "What concrete quantitative savings (hours saved or revenue generated) can a client expect in Month 1?"
+        },
+        {
+          comment: "Enterprise IT teams resist software that requires heavy custom implementation.",
+          q: "What is the average implementation timeframe for an enterprise customer from contract signing to full rollout?"
+        }
+      ];
+      const pick = options[turnIndex % options.length];
+      aiComment = pick.comment;
+      followUpQuestion = pick.q;
+      scoreImpact = 92;
+    } else {
+      const turnResponses = [
+        {
+          comment: "Enterprise buying committees evaluate risk, implementation complexity, and ongoing vendor SLA.",
+          q: "What uptime SLA guarantees and dedicated support tiers do you include in your enterprise contracts?"
+        },
+        {
+          comment: "Long sales cycles can drain early startup cash reserves.",
+          q: "How do you navigate 6-to-9 month enterprise procurement hurdles without burning through your seed runway?"
+        },
+        {
+          comment: "Let's discuss contract structure and customer expansion.",
+          q: "What is your land-and-expand pricing strategy when moving from a single department pilot to company-wide deployment?"
+        }
+      ];
+      const pick = turnResponses[turnIndex % turnResponses.length];
+      aiComment = pick.comment;
+      followUpQuestion = pick.q;
+      scoreImpact = 81;
+    }
+  }
+
+  // Dynamic Telemetry Scoring & Soundbite Tip
+  const textLen = lowerText.length;
+  const clarityScore = Math.min(99, Math.max(68, Math.floor(scoreImpact + (textLen > 40 ? 6 : -8))));
+  const persuasivenessScore = Math.min(99, Math.max(62, Math.floor(scoreImpact + (Math.random() * 8 - 4))));
+  const objectionHandlingScore = Math.min(98, Math.max(65, Math.floor(scoreImpact + (containsWord("data", "metric", "percent", "number", "dollar") ? 7 : -2))));
+
+  const soundbiteTips = [
+    `Key Soundbite: "State a precise quantitative metric before explaining strategy."`,
+    `Key Soundbite: "Acknowledge the risk directly, then present your mitigation strategy."`,
+    `Key Soundbite: "Reference real customer feedback to ground your argument in proof."`,
+    `Key Soundbite: "Highlight your speed of execution as your key competitive moat."`
+  ];
+  const soundbiteTip = soundbiteTips[turnIndex % soundbiteTips.length];
 
   return {
     personaId,
@@ -310,7 +507,7 @@ export async function simulateInvestorResponse(personaId, userPitchText, convers
       objectionHandling: objectionHandlingScore,
       overall: Math.round((clarityScore + persuasivenessScore + objectionHandlingScore) / 3)
     },
-    soundbiteTip: `Key Soundbite: "Anchor your answer with a specific quantitative metric before explaining the strategy."`
+    soundbiteTip
   };
 }
 
@@ -343,13 +540,16 @@ export function calculateOverallScorecard(qaHistory, deckData) {
     };
   }
 
-  const claritySum = qaHistory.reduce((acc, curr) => acc + curr.scores.clarity, 0);
-  const persSum = qaHistory.reduce((acc, curr) => acc + curr.scores.persuasiveness, 0);
-  const objSum = qaHistory.reduce((acc, curr) => acc + curr.scores.objectionHandling, 0);
+  const investorItems = qaHistory.filter((item) => item.scores);
+  const itemsToEvaluate = investorItems.length > 0 ? investorItems : qaHistory;
 
-  const clarityAvg = Math.round(claritySum / qaHistory.length);
-  const persuasivenessAvg = Math.round(persSum / qaHistory.length);
-  const objectionHandlingAvg = Math.round(objSum / qaHistory.length);
+  const claritySum = itemsToEvaluate.reduce((acc, curr) => acc + (curr.scores?.clarity || 85), 0);
+  const persSum = itemsToEvaluate.reduce((acc, curr) => acc + (curr.scores?.persuasiveness || 85), 0);
+  const objSum = itemsToEvaluate.reduce((acc, curr) => acc + (curr.scores?.objectionHandling || 85), 0);
+
+  const clarityAvg = Math.round(claritySum / itemsToEvaluate.length);
+  const persuasivenessAvg = Math.round(persSum / itemsToEvaluate.length);
+  const objectionHandlingAvg = Math.round(objSum / itemsToEvaluate.length);
 
   const overallScore = Math.round((clarityAvg + persuasivenessAvg + objectionHandlingAvg) / 3);
 
